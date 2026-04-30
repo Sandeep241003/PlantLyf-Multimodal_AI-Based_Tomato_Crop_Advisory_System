@@ -37,18 +37,16 @@ An intelligent **Retrieval-Augmented Generation (RAG) chatbot** built using **lo
 
 ## 📁 Project Structure
 
-
-RAG-Chatbot/
-│── chatbot2.py # Main Streamlit app
-│── rag_pipeline.py # RAG logic (retrieval + generation)
-│── embeddings.py # Embedding generation
-│── vector_store/ # FAISS / Chroma DB storage
-│── data/ # Input documents
-│── utils/ # Helper functions
-│── audio/ # Temporary audio files
-│── requirements.txt
-│── README.md
-
+RAG-Chatbot/  
+│── chatbot2.py # Main Streamlit app  
+│── rag_pipeline.py # RAG logic (retrieval + generation)  
+│── embeddings.py # Embedding generation  
+│── vector_store/ # FAISS / Chroma DB storage  
+│── data/ # Input documents  
+│── utils/ # Helper functions  
+│── audio/ # Temporary audio files  
+│── requirements.txt  
+│── README.md  
 
 ---
 
@@ -59,42 +57,87 @@ RAG-Chatbot/
 ```bash
 git clone https://github.com/your-username/rag-chatbot.git
 cd rag-chatbot
-2️⃣ Create Virtual Environment
+````
+
+### 2️⃣ Create Virtual Environment
+
+```bash
 python -m venv venv
 source venv/bin/activate   # Mac/Linux
 venv\Scripts\activate      # Windows
-3️⃣ Install Dependencies
+```
+
+### 3️⃣ Install Dependencies
+
+```bash
 pip install -r requirements.txt
-4️⃣ Install Ollama
+```
+
+### 4️⃣ Install Ollama
 
 Download and install Ollama:
-https://ollama.com/
+[https://ollama.com/](https://ollama.com/)
 
 Pull a model:
 
+```bash
 ollama pull mistral
-5️⃣ Install FFmpeg (Required for Audio)
+```
+
+### 5️⃣ Install FFmpeg (Required for Audio)
 
 Download from:
-https://ffmpeg.org/download.html
+[https://ffmpeg.org/download.html](https://ffmpeg.org/download.html)
 
 Set path in code if needed:
 
+```python
 AudioSegment.converter = "path_to_ffmpeg/bin/ffmpeg.exe"
-▶️ Running the App
+```
+
+---
+
+## 📦 Download Model File
+
+The required model file is hosted externally due to GitHub file size limits.
+
+🔗 **Download here:**
+[https://drive.google.com/file/d/1q1tthVedlNB1SliukBXyg7O2Yo_iNKeL/view?usp=drive_link](https://drive.google.com/file/d/1q1tthVedlNB1SliukBXyg7O2Yo_iNKeL/view?usp=drive_link)
+
+After downloading, place the model file inside the project root folder (or required model directory).
+
+---
+
+## ▶️ Running the App
+
+```bash
 streamlit run chatbot2.py
-🎤 Voice Input Feature
-Click Record Audio
-Speak your query
-Audio is converted using Whisper
-Text is passed to RAG pipeline
-🔄 How It Works
-User asks a question (text or voice)
-Query is converted into embeddings
-Relevant documents are retrieved from vector DB
-Context + query sent to LLM (Ollama)
-LLM generates final response
-🧩 RAG Pipeline Flow
+```
+
+---
+
+## 🎤 Voice Input Feature
+
+1. Click **Record Audio**
+2. Speak your query
+3. Audio is converted using Whisper
+4. Text is passed to RAG pipeline
+
+---
+
+## 🔄 How It Works
+
+1. User asks a question (text or voice)
+2. Query is converted into embeddings
+3. Relevant documents are retrieved from vector DB
+4. Context + query sent to LLM (Ollama)
+5. LLM generates final response
+
+---
+
+## 🧩 RAG Pipeline Flow
+
+```text
 User Query
    ↓
 Embedding Model
