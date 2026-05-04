@@ -49,6 +49,7 @@ pydub>=0.25.1
 # 🔊 (Optional but Recommended) Voice Output
 # -------------------------------
 gTTS>=2.4.0
+edge-tts>=6.1.12
 
 # -------------------------------
 # ⚠️ Audio backend support
