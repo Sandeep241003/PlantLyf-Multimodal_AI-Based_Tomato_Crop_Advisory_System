@@ -5,8 +5,6 @@ from typing import Dict, List, Tuple
 import numpy as np
 from PIL import Image
 import streamlit as st
-from tensorflow.keras.models import load_model
-from tensorflow.keras.applications.efficientnet import preprocess_input
 
 import gdown
 
@@ -17,11 +15,12 @@ def load_disease_model(model_path: str = "tomato_disease_new_model.keras"):
     Load and cache the tomato disease classification model.
     """
     ensure_disease_model_present(model_path)
+    try:
+        from tensorflow.keras.models import load_model  # lazy import for Streamlit Cloud
+    except Exception as e:
+        st.error(f"TensorFlow failed to import on this environment: {e}")
+        st.stop()
     return load_model(model_path)
-
-
-# Global model handle for convenience
-model = load_disease_model()
 
 
 # Class names (must match training order)
@@ -50,6 +49,11 @@ def _preprocess_image(
     image = image.resize(target_size)
     array = np.array(image).astype("float32")
     array = np.expand_dims(array, axis=0)
+    try:
+        from tensorflow.keras.applications.efficientnet import preprocess_input  # lazy import
+    except Exception as e:
+        st.error(f"TensorFlow EfficientNet preprocess import failed: {e}")
+        st.stop()
     array = preprocess_input(array)
     return array
 
@@ -58,6 +62,7 @@ def predict_disease_from_pil(image: Image.Image) -> Dict:
     """
     Run disease prediction on a PIL image and return a structured result.
     """
+    model = load_disease_model()
     input_array = _preprocess_image(image)
     preds = model.predict(input_array, verbose=0)[0]
 
