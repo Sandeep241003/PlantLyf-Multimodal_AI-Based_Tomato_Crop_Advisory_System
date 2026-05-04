@@ -1,4 +1,5 @@
 import io
+import os
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -7,12 +8,15 @@ import streamlit as st
 from tensorflow.keras.models import load_model
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
+import gdown
+
 
 @st.cache_resource
 def load_disease_model(model_path: str = "tomato_disease_new_model.keras"):
     """
     Load and cache the tomato disease classification model.
     """
+    ensure_disease_model_present(model_path)
     return load_model(model_path)
 
 
@@ -93,4 +97,46 @@ def analyze_uploaded_image(file) -> Dict:
 
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     return predict_disease_from_pil(image)
+
+
+def _get_secret(name: str):
+    """
+    Read config from Streamlit secrets (preferred) or environment variables (fallback).
+    """
+    try:
+        if name in st.secrets:
+            return st.secrets.get(name)
+    except Exception:
+        pass
+    return os.getenv(name)
+
+
+def ensure_disease_model_present(model_path: str):
+    """
+    Ensure the Keras model file exists locally.
+    If missing (e.g., on Streamlit Cloud), download it from Google Drive using MODEL_FILE_ID.
+    """
+    if os.path.exists(model_path):
+        return
+
+    file_id = _get_secret("MODEL_FILE_ID")
+    if not file_id:
+        st.error(
+            "Disease model file is missing.\n\n"
+            "Set `MODEL_FILE_ID` in Streamlit Cloud Secrets to auto-download the model."
+        )
+        st.stop()
+
+    # Download from Google Drive to the expected filename
+    try:
+        url = f"https://drive.google.com/uc?id={file_id}"
+        with st.spinner("Downloading disease model (first-time setup)..."):
+            gdown.download(url, model_path, quiet=False)
+    except Exception as e:
+        st.error(f"Failed to download disease model from Google Drive: {e}")
+        st.stop()
+
+    if not os.path.exists(model_path):
+        st.error("Model download did not create the expected file. Please re-check Drive permissions/link.")
+        st.stop()
 

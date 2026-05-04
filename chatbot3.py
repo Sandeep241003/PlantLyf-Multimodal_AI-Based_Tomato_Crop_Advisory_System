@@ -28,7 +28,9 @@ from utils.language_utils import detect_language, translate_to_english, translat
 load_dotenv()
 DB_FAISS_PATH = "vectorstore/db_faiss"
 
-assert os.getenv("GROQ_API_KEY"), "GROQ_API_KEY not set in .env"
+if not os.getenv("GROQ_API_KEY"):
+    st.error("Missing `GROQ_API_KEY`. Add it to Streamlit Cloud Secrets (or local .env).")
+    st.stop()
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 # ---------------- VECTORSTORE ----------------
