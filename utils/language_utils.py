@@ -1,9 +1,26 @@
 from langdetect import detect
 from deep_translator import GoogleTranslator
 
+INDIAN_LANGUAGES = {
+    "hi": "Hindi",
+    "en": "English",
+    "bn": "Bengali",
+    "te": "Telugu",
+    "mr": "Marathi",
+    "ta": "Tamil",
+    "ur": "Urdu",
+    "gu": "Gujarati",
+    "kn": "Kannada",
+    "ml": "Malayalam"
+}
+
 def detect_language(text):
     try:
-        return detect(text)
+        lang = detect(text)
+        if lang in INDIAN_LANGUAGES:
+            return lang
+        else:
+            return "en"
     except:
         return "en"
 
