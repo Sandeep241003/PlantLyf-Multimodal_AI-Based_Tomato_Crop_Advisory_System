@@ -96,10 +96,20 @@ def transcribe_audio(audio_bytes):
             except Exception:
                 pass
 
-def generate_audio_file(text: str) -> str:
+def get_voice(lang):
+    voice_map = {
+        "en": "en-IN-NeerjaNeural",
+        "hi": "hi-IN-SwaraNeural",
+        "ta": "ta-IN-PallaviNeural",
+        "te": "te-IN-ShrutiNeural",
+        "bn": "bn-IN-TanishaaNeural"
+    }
+    return voice_map.get(lang, "en-IN-NeerjaNeural")
+
+def generate_audio_file(text: str, lang="en") -> str:
     """Generate TTS audio and return the temp file path. Fully synchronous."""
     async def _gen():
-        voice = "en-IN-NeerjaNeural"
+        voice = get_voice(lang)
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
             temp_path = f.name
         communicate = edge_tts.Communicate(text[:], voice)
@@ -113,10 +123,10 @@ def generate_audio_file(text: str) -> str:
     finally:
         loop.close()
 
-def speak(text: str):
+def speak(text: str, lang="en"):
     """Generate and immediately play TTS audio inline."""
     try:
-        audio_path = generate_audio_file(text)
+        audio_path = generate_audio_file(text, lang)
         if audio_path and os.path.exists(audio_path):
             st.audio(audio_path, autoplay=True)
             # Clean up after rendering
@@ -443,7 +453,7 @@ def main():
             st.chat_message("assistant").markdown(final_answer)
 
             # ✅ Synchronous TTS — no threading, no sleep, no race condition
-            speak(final_answer)
+            speak(final_answer, lang)
 
             st.session_state.messages.append({"role": "user", "content": user_query})
             st.session_state.messages.append({"role": "assistant", "content": final_answer})
